@@ -18,6 +18,7 @@ class PayPalController extends Controller
         // Initialize PayPal client and set API credentials from the config file
         $provider = new PayPalClient();
         $provider->setApiCredentials(config('paypal'));
+        Log::info(config('paypal'));
 
         // Get an access token to authenticate with PayPal
         $paypalToken = $provider->getAccessToken();
@@ -60,13 +61,19 @@ class PayPalController extends Controller
     // Function to capture the payment after the user approves the order on PayPal
     public function captureOrder(Request $request, $bookingId)
     {
+        $token = $request->query('token');
+        if (is_null($token)) {
+            return redirect()->route('rooms.mybooking')->with('error', 'Invalid PayPal token.');
+        }
+        Log::info('Booking ID: ' . $bookingId);
+
         // Initialize PayPal client and set API credentials
         $provider = new PayPalClient();
         $provider->setApiCredentials(config('paypal'));
         $paypalToken = $provider->getAccessToken();
 
         // Get the token from the request and capture the payment order
-        $response = $provider->capturePaymentOrder($request->query('token'));
+        $response = $provider->capturePaymentOrder($token);
         // Check if the payment was successful
         if (isset($response['status']) && $response['status'] == 'COMPLETED') {
             $booking = Booking::findOrFail($bookingId);
