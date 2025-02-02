@@ -68,7 +68,7 @@ class AdminController extends Controller
             'name' => $request->name,
             'type' => $request->type,
             'price' => $request->price,
-            'availability' => $request->has('availability') ? true : false,
+            'is_available' => $request->input('availability', 0), 
         ]);
 
         // Redirect back to the rooms management page with a success message
@@ -99,12 +99,14 @@ class AdminController extends Controller
      */
     public function UpdateRoom(Request $request, $id)
     {
+
+        //return $request;
         // Validate the incoming request
         $request->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|string',
             'price' => 'required|numeric',
-            'availability' => 'nullable|boolean',
+            'is_available' => 'nullable|boolean',
         ]);
 
         // Find the room by ID or fail
@@ -115,7 +117,7 @@ class AdminController extends Controller
             'name' => $request->name,
             'type' => $request->type,
             'price' => $request->price,
-            'availability' => $request->has('availability') ? true : false,
+            'is_available' => $request->input('is_available', 0), 
         ]);
 
         // Redirect back to the rooms management page with a success message
