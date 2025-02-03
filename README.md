@@ -1,10 +1,11 @@
+```markdown
 # Simple Room Booking System with Admin Panel
 
 This is a simple room booking system built with Laravel, featuring an admin panel for CRUD operations on rooms, the ability to update room availability based on customer bookings, and PayPal payment integration for bookings. Customers can browse rooms, register to book a room, and pay after booking.
 
 ### Features:
 - **Admin Panel**: CRUD operations for rooms (Create, Read, Update, Delete).
-- **Room Availability**: Update room availability based on customer bookings.
+- **Room Availability**: Admin can update room availability based on customer bookings and payment statuses.
 - **Customer Booking**: Customers can browse available rooms and book them.
 - **PayPal Integration**: Secure payment processing via PayPal after booking.
 - **Authentication**: Users can register, login, and manage their bookings.
@@ -26,86 +27,143 @@ Before you begin, make sure you have the following installed:
 
 ## Setup Guide
 
-1. Clone the Repository
+1. **Clone the Repository**
 
-Navigate to the project directory and install the required PHP and frontend dependencies:
-git clone https://github.com/AmshaChandran/RoomBookingSystem.git
+   Clone or download the repository:
 
-2. Install Dependencies
+   ```bash
+   git clone https://github.com/AmshaChandran/RoomBookingSystem.git
+   ```
 
-Navigate to the project directory and install the required PHP and frontend dependencies:
-cd room-booking-system
-composer install
-npm install
+   Alternatively, you can download the ZIP file.
 
-3. Configure Environment Variables
+2. **Install Dependencies**
 
-Rename the .env.example file to .env and configure the following environment variables:
-•	APP_KEY: Generate an application key using php artisan key:generate.
-•	DATABASE: Set your database credentials for MySQL or your preferred database.
-•	PAYPAL: Configure your PayPal credentials (client ID and secret).
-For example, set up your PayPal credentials in .env like this:
-PAYPAL_MODE =sandbox or live
-PAYPAL_CLIENT_ID=your-client-id
-PAYPAL_SECRET=your-secret
+   Navigate to the project directory and install the required PHP and frontend dependencies:
 
-4. Set Up the Database
+   ```bash
+   cd RoomBookingSystem
+   composer install
+   npm install
+   ```
 
-Run the following Artisan command to create the necessary database tables:
-php artisan migrate
+3. **Configure Environment Variables**
 
-5. Set Up the Storage
+   Copy the contents of `.env.example` into a new `.env` file:
 
-Link the storage directory to the public directory:
-php artisan storage:link
+   ```bash
+   cp .env.example .env
+   ```
 
-6. Compile Frontend Assets
+   In the `.env` file, set the following values:
+   - **DB_DATABASE**: Create a new MySQL database and set the name here.
+   - **PayPal Settings**: Replace the following with your PayPal API credentials:
 
-Use the following command to compile the Tailwind CSS and other frontend assets:
-npm run dev
+   ```env
+   PAYPAL_MODE=sandbox    # or live
+   PAYPAL_SANDBOX_CLIENT_ID=your-sandbox-client-id
+   PAYPAL_SANDBOX_CLIENT_SECRET=your-sandbox-client-secret
+   PAYPAL_LIVE_CLIENT_ID=your-live-client-id
+   PAYPAL_LIVE_CLIENT_SECRET=your-live-client-secret
+   ```
 
-7. Create Admin and User Roles
+4. **Generate Application Key**
 
-•	The Admin can manage rooms, bookings, and view payment statuses.
-•	Users can register, browse available rooms, and make bookings.
+   Set the application key for the project:
 
-8. Run the Application
+   ```bash
+   php artisan key:generate
+   ```
 
-Now, you are ready to run the application using Laravel's built-in server:
-php artisan serve
-Visit http://localhost:8000 in your browser.
-________________________________________
+5. **Run Migrations**
 
-Features and Functionality
+   Run the migrations to create the necessary tables in the database:
 
-1. Admin Panel
+   ```bash
+   php artisan migrate
+   ```
 
-The admin panel allows the admin to:
-•	Manage Rooms: Add, update, and delete rooms.
-•	Update Room Availability: Mark rooms as available or unavailable based on customer bookings.
-•	View Bookings: View the bookings made by customers along with payment statuses.
+6. **Run Seeders**
 
-2. Customer Features
+   Seed the database with initial data for the admin and rooms:
+
+   ```bash
+   php artisan db:seed --class=AdminSeeder
+   php artisan db:seed --class=RoomSeeder
+   ```
+
+7. **Run Storage Link**
+
+   Link the storage directory to the public directory:
+
+   ```bash
+   php artisan storage:link
+   ```
+
+8. **Compile Frontend Assets**
+
+   Use the following command to compile the Tailwind CSS and other frontend assets:
+
+   ```bash
+   npm run dev
+   ```
+
+9. **Run the Application**
+
+   Now, you're ready to run the application:
+
+   ```bash
+   php artisan serve
+   ```
+
+   Visit [http://localhost:8000](http://localhost:8000) in your browser.
+
+---
+
+## Admin Credentials
+
+- **Email**: `admin@example.com`
+- **Password**: `adminpassword`
+
+You can now log in as an admin to manage rooms and bookings.
+
+---
+
+## Admin Features
+
+The **admin** can:
+- **Manage Rooms**: Add, update, and delete rooms.
+- **Check Payment Status**: Admin can view and verify the payment status of bookings.
+- **Update Room Availability**: Based on the payment status, the admin can update room availability (e.g., mark as unavailable if booked and paid).
+- **View Bookings**: View the bookings made by customers, including details like room type, booking date, and payment status.
+
+---
+
+## Customer Features
 
 Customers can:
-•	Browse Rooms: View available rooms and their details.
-•	Register and Login: Register a new account and log in to manage bookings.
-•	Book Rooms: Choose a room, enter booking details, and pay via PayPal.
-•	Pay via PayPal: Secure payment process via PayPal after booking a room.
-________________________________________
-Payment Integration with PayPal
+- Browse available rooms and their details.
+- Register a new account and log in to manage bookings.
+- Book a room, enter booking details, and pay via PayPal.
 
-PayPal integration allows customers to make payments after booking a room. The process is:
+---
 
-1.	Booking: Customers select a room and book. After booking proceed to checkout via Pay Now.
-2.	Payment: Customers are redirected to PayPal to complete the payment.
-3.	Confirmation: Upon successful payment, the room availability is updated, and the booking is confirmed.
+## PayPal Payment Integration
 
-Setting Up PayPal
+PayPal integration allows customers to make payments after booking a room. The process is as follows:
 
-You will need to set up a PayPal Developer account and generate API credentials (Client ID and Secret). These credentials should be added to the .env file as mentioned earlier.
-________________________________________
-Acknowledgements
-•	Thanks to the Laravel community for creating a wonderful framework!
-•	Special thanks to PayPal for providing a simple and secure payment API.
-________________________________________
+1. **Booking**: Customers select a room and book. After booking, proceed to checkout via PayPal.
+2. **Payment**: Customers are redirected to PayPal to complete the payment.
+3. **Confirmation**: Upon successful payment, the room availability is updated, and the booking is confirmed. Admin can also manually verify the payment status.
+
+---
+
+## Acknowledgements
+
+- Thanks to the Laravel community for creating a wonderful framework!
+- Special thanks to PayPal for providing a simple and secure payment API.
+
+Happy Coding! 🚀
+```
+
+I added that the admin can check the payment status and update room availability accordingly. Let me know if you'd like any further edits!
